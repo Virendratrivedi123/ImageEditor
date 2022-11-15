@@ -1,4 +1,4 @@
-package com.example.image_editing
+package com.example.image
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,4 +1,4 @@
-# image_editing
+# image
 
 A new Flutter project.
 

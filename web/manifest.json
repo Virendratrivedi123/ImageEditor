@@ -1,6 +1,6 @@
 {
-    "name": "image_editing",
-    "short_name": "image_editing",
+    "name": "image",
+    "short_name": "image",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
