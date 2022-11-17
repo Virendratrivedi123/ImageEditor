@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ViewportOffset;
 import 'package:flutter/services.dart';
+import 'package:image/demo.dart';
 import 'package:image/home.dart';
 import 'package:image/view.dart';
 
@@ -53,7 +54,8 @@ class _EditImageScreenState extends EditImageViewModel {
 
   Future pickImageC() async {
     try {
-      final image = await ImagePicker().pickImage(source: ImageSource.camera);
+      final XFile? image =
+          await ImagePicker().pickImage(source: ImageSource.camera);
 
       if (image == null) return;
 
@@ -112,7 +114,7 @@ class _EditImageScreenState extends EditImageViewModel {
         final color = value;
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.blue,
             leading: Builder(
               builder: (context) => IconButton(
                 icon: const Icon(Icons.menu_rounded),
@@ -176,7 +178,7 @@ class _EditImageScreenState extends EditImageViewModel {
                     child: const Icon(Icons.add),
                   )),
               Padding(
-                  padding: const EdgeInsets.only(right: 20.0),
+                  padding: const EdgeInsets.only(right: 10.0),
                   child: GestureDetector(
                     onTap: () {
                       decreaseFontSize();
@@ -184,13 +186,92 @@ class _EditImageScreenState extends EditImageViewModel {
                     child: const Icon(Icons.remove),
                   )),
               Padding(
-                  padding: const EdgeInsets.only(right: 20.0),
+                  padding: const EdgeInsets.only(right: 10.0),
                   child: GestureDetector(
                     onTap: () {
-                      italicText();
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => const FlutterPainterExample2()));
+                      }
                     },
-                    child: const Icon(Icons.more_vert),
+                    child: const Icon(Icons.color_lens),
                   )),
+              Container(
+                padding: const EdgeInsets.only(right: 5.0),
+                height: 20,
+                width: 20,
+                child: GestureDetector(
+                  onTap: () => showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => Container(
+                        height: MediaQuery.of(context).size.height * 0.10,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(25.0),
+                            topRight: Radius.circular(25.0),
+                          ),
+                        ),
+                        child: ListView(children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                alignment: Alignment.center,
+                                margin:
+                                    const EdgeInsets.only(top: 20, left: 40),
+                                height: 40,
+                                width: 40,
+                                child: GestureDetector(
+                                    onTap: () => changeTextColor(Colors.yellow),
+                                    child: const CircleAvatar(
+                                      backgroundColor: Colors.yellow,
+                                    )),
+                              ),
+                              Container(
+                                alignment: Alignment.bottomCenter,
+                                margin:
+                                    const EdgeInsets.only(top: 20, left: 50),
+                                height: 40,
+                                width: 40,
+                                child: GestureDetector(
+                                    onTap: () => changeTextColor(Colors.red),
+                                    child: const CircleAvatar(
+                                      backgroundColor: Colors.red,
+                                    )),
+                              ),
+                              Container(
+                                alignment: Alignment.bottomCenter,
+                                margin:
+                                    const EdgeInsets.only(top: 20, left: 50),
+                                height: 40,
+                                width: 40,
+                                child: GestureDetector(
+                                    onTap: () => changeTextColor(Colors.blue),
+                                    child: const CircleAvatar(
+                                      backgroundColor: Colors.blue,
+                                    )),
+                              ),
+                              Container(
+                                alignment: Alignment.bottomCenter,
+                                margin:
+                                    const EdgeInsets.only(top: 20, left: 50),
+                                height: 40,
+                                width: 40,
+                                child: GestureDetector(
+                                    onTap: () => changeTextColor(Colors.black),
+                                    child: const CircleAvatar(
+                                      backgroundColor: Colors.black,
+                                    )),
+                              ),
+                            ],
+                          ),
+                        ])),
+                  ),
+                  child: const Icon(Icons.more_vert),
+                ),
+              ),
             ],
           ),
           // appBar: _appBar,
@@ -270,7 +351,7 @@ class _EditImageScreenState extends EditImageViewModel {
                 margin: const EdgeInsets.only(
                   top: 0.0,
                 ),
-                height: MediaQuery.of(context).size.height * 0.4,
+                height: MediaQuery.of(context).size.height * 0.75,
                 child: Stack(
                   children: [
                     Center(
@@ -279,6 +360,7 @@ class _EditImageScreenState extends EditImageViewModel {
                               image!,
                               fit: BoxFit.fill,
                               width: MediaQuery.of(context).size.width,
+                              height: 600,
                               color: color.withOpacity(0.5),
                               colorBlendMode: BlendMode.color,
                             )
