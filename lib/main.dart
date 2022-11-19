@@ -21,7 +21,7 @@ void main() {
           appBarTheme: const AppBarTheme(
             elevation: 0, // This removes the shadow from all App Bars.
           )),
-      home: const MyApp(),
+      home: const MyApp2(),
       debugShowCheckedModeBanner: false,
     ),
   );

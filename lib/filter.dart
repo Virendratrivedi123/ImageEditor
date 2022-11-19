@@ -491,7 +491,7 @@ class _EditImageScreenState extends EditImageViewModel {
                               colorBlendMode: BlendMode.color,
                             )
                           : Image.network(
-                              'https://docs.flutter.dev/cookbook/img-files/effects/instagram-buttons/millenial-dude.jpg',
+                              'https://static.wikia.nocookie.net/just-because/images/0/0c/NoImage_Available.png/revision/latest?cb=20170601005615',
                               fit: BoxFit.fill,
                               width: MediaQuery.of(context).size.width,
                               color: color.withOpacity(0.5),
