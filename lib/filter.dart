@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, prefer_typing_uninitialized_variables
 
 import 'dart:math' as math;
 import 'dart:io';
@@ -6,11 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ViewportOffset;
 import 'package:flutter/services.dart';
 import 'package:image/demo.dart';
+import 'package:image/demo2.dart';
+import 'package:image/edit..dart';
+// ignore: unused_import
 import 'package:image/home.dart';
 import 'package:image/view.dart';
+import 'package:flutter_painter/flutter_painter.dart';
 
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore: unnecessary_import
+import 'package:painter/painter.dart';
 import 'package:screenshot/screenshot.dart';
 
 import 'imagetext.dart';
@@ -32,7 +38,37 @@ class _EditImageScreenState extends EditImageViewModel {
     });
   }
 
+  List<String> materialAmountList = [];
+  List<String> imageLinks = [
+    "https://i.imgur.com/btoI5OX.png",
+    "https://i.imgur.com/EXTQFt7.png",
+    "https://i.imgur.com/EDNjJYL.png",
+    "https://i.imgur.com/uQKD6NL.png",
+    "https://i.imgur.com/cMqVRbl.png",
+    "https://i.imgur.com/1cJBAfI.png",
+    "https://i.imgur.com/eNYfHKL.png",
+    "https://i.imgur.com/c4Ag5yt.png",
+    "https://i.imgur.com/GhpCJuf.png",
+    "https://i.imgur.com/XVMeluF.png",
+    "https://i.imgur.com/mt2yO6Z.png",
+    "https://i.imgur.com/rw9XP1X.png",
+    "https://i.imgur.com/pD7foZ8.png",
+    "https://i.imgur.com/13Y3vp2.png",
+    "https://i.imgur.com/ojv3yw1.png",
+    "https://i.imgur.com/f8ZNJJ7.png",
+    "https://i.imgur.com/BiYkHzw.png",
+    "https://i.imgur.com/snJOcEz.png",
+    "https://i.imgur.com/b61cnhi.png",
+    "https://i.imgur.com/FkDFzYe.png",
+    "https://i.imgur.com/P310x7d.png",
+    "https://i.imgur.com/5AHZpua.png",
+    "https://i.imgur.com/tmvJY4r.png",
+    "https://i.imgur.com/PdVfGkV.png",
+    "https://i.imgur.com/1PRzwBf.png",
+    "https://i.imgur.com/VeeMfBS.png",
+  ];
   File? image;
+  var controller;
 
   Future pickImage() async {
     try {
@@ -87,6 +123,17 @@ class _EditImageScreenState extends EditImageViewModel {
     _filterColor.value = value;
   }
 
+  void addSticker() async {
+    final imageLink = await showDialog<String>(
+        context: context,
+        builder: (context) => SelectStickerImageDialog(
+              imagesLinks: imageLinks,
+            ));
+    if (imageLink == null) return;
+    controller.addImage(
+        await NetworkImage(imageLink).image, const Size(100, 100));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -122,7 +169,7 @@ class _EditImageScreenState extends EditImageViewModel {
               ),
             ),
             title: const Text(
-              "Oajoo imagee editing",
+              "image editing",
             ),
             actions: <Widget>[
               Padding(
@@ -185,17 +232,23 @@ class _EditImageScreenState extends EditImageViewModel {
                     },
                     child: const Icon(Icons.remove),
                   )),
-              Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => const FlutterPainterExample2()));
-                      }
-                    },
-                    child: const Icon(Icons.color_lens),
-                  )),
+              // Padding(
+              //     padding: const EdgeInsets.only(right: 10.0),
+              //     child: GestureDetector(
+              //       onTap: () async {
+              //         File? file = image;
+              //         if (file != null) {
+              //           Navigator.of(context).push(
+              //             MaterialPageRoute(
+              //               builder: (context) => AdvancedExample(
+              //                 selectedImage: file.path,
+              //               ),
+              //             ),
+              //           );
+              //         }
+              //       },
+              //       child: const Icon(Icons.color_lens),
+              //     )),
               Container(
                 padding: const EdgeInsets.only(right: 5.0),
                 height: 20,
@@ -297,7 +350,7 @@ class _EditImageScreenState extends EditImageViewModel {
                         Container(
                           margin: const EdgeInsets.only(top: 0, left: 0),
                           alignment: Alignment.bottomLeft,
-                          child: const Text(" Ooajoo Image Editor",
+                          child: const Text("Image Editor",
                               style: TextStyle(
                                   fontFamily: "PlayfairDisplay",
                                   color: Colors.white70,
@@ -311,6 +364,79 @@ class _EditImageScreenState extends EditImageViewModel {
                     //   width: 10,
                     // ),
                     ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.emoji_emotions,
+                    color: Colors.blue,
+                  ),
+                  title: const Text('stickers'),
+                  onTap: () async {
+                    File? file = image;
+                    if (file != null) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AdvancedExample(
+                            selectedImage: file.path,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                // ListTile(
+                //   leading: const Icon(
+                //     Icons.emoji_emotions,
+                //     color: Colors.blue,
+                //   ),
+                //   title: const Text('frames'),
+                //   onTap: () async {
+                //     File? file = image;
+                //     if (file != null) {
+                //       Navigator.of(context).push(
+                //         MaterialPageRoute(
+                //           builder: (context) => HomePage(
+                //             selectedImage: file.path,
+                //           ),
+                //         ),
+                //       );
+                //     }
+                //   },
+                // ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.color_lens,
+                    color: Colors.blue,
+                  ),
+                  title: const Text('Draw'),
+                  onTap: () async {
+                    {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const FlutterPainterExample2(),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.filter_frames,
+                    color: Colors.blue,
+                  ),
+                  title: const Text('Frames'),
+                  onTap: () async {
+                    File? file = image;
+                    if (file != null) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Carousel(
+                            selectedImage: file.path,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
                 ListTile(
                   leading: const Icon(
                     Icons.photo_album,
@@ -876,6 +1002,45 @@ class FilterItem extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class SelectStickerImageDialog extends StatelessWidget {
+  final List<String> imagesLinks;
+
+  const SelectStickerImageDialog({Key? key, this.imagesLinks = const []})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("Select sticker"),
+      content: imagesLinks.isEmpty
+          ? const Text("No images")
+          : FractionallySizedBox(
+              heightFactor: 0.5,
+              child: SingleChildScrollView(
+                child: Wrap(
+                  children: [
+                    for (final imageLink in imagesLinks)
+                      InkWell(
+                        onTap: () => Navigator.pop(context, imageLink),
+                        child: FractionallySizedBox(
+                          widthFactor: 1 / 4,
+                          child: Image.network(imageLink),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+      actions: [
+        TextButton(
+          child: const Text("Cancel"),
+          onPressed: () => Navigator.pop(context),
+        )
+      ],
     );
   }
 }

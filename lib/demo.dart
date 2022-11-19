@@ -40,6 +40,35 @@ class _FlutterPainterExampleState extends State<FlutterPainterExample2> {
     ..style = PaintingStyle.stroke
     ..strokeCap = StrokeCap.round;
 
+  static const List<String> imageLinks = [
+    "https://i.imgur.com/btoI5OX.png",
+    "https://i.imgur.com/EXTQFt7.png",
+    "https://i.imgur.com/EDNjJYL.png",
+    "https://i.imgur.com/uQKD6NL.png",
+    "https://i.imgur.com/cMqVRbl.png",
+    "https://i.imgur.com/1cJBAfI.png",
+    "https://i.imgur.com/eNYfHKL.png",
+    "https://i.imgur.com/c4Ag5yt.png",
+    "https://i.imgur.com/GhpCJuf.png",
+    "https://i.imgur.com/XVMeluF.png",
+    "https://i.imgur.com/mt2yO6Z.png",
+    "https://i.imgur.com/rw9XP1X.png",
+    "https://i.imgur.com/pD7foZ8.png",
+    "https://i.imgur.com/13Y3vp2.png",
+    "https://i.imgur.com/ojv3yw1.png",
+    "https://i.imgur.com/f8ZNJJ7.png",
+    "https://i.imgur.com/BiYkHzw.png",
+    "https://i.imgur.com/snJOcEz.png",
+    "https://i.imgur.com/b61cnhi.png",
+    "https://i.imgur.com/FkDFzYe.png",
+    "https://i.imgur.com/P310x7d.png",
+    "https://i.imgur.com/5AHZpua.png",
+    "https://i.imgur.com/tmvJY4r.png",
+    "https://i.imgur.com/PdVfGkV.png",
+    "https://i.imgur.com/1PRzwBf.png",
+    "https://i.imgur.com/VeeMfBS.png",
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -387,7 +416,12 @@ class _FlutterPainterExampleState extends State<FlutterPainterExample2> {
                 onPressed: addText,
               ),
               // Add sticker image
-
+              IconButton(
+                icon: const Icon(
+                  PhosphorIcons.sticker,
+                ),
+                onPressed: addSticker,
+              ),
               // Add shapes
               if (controller.shapeFactory == null)
                 PopupMenuButton<ShapeFactory?>(
@@ -459,6 +493,17 @@ class _FlutterPainterExampleState extends State<FlutterPainterExample2> {
 
   void redo() {
     controller.redo();
+  }
+
+  void addSticker() async {
+    final imageLink = await showDialog<String>(
+        context: context,
+        builder: (context) => const SelectStickerImageDialog(
+              imagesLinks: imageLinks,
+            ));
+    if (imageLink == null) return;
+    controller.addImage(
+        await NetworkImage(imageLink).image, const Size(100, 100));
   }
 
   void saveToGallery() {

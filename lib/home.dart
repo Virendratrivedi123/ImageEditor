@@ -1,615 +1,309 @@
-// ignore_for_file: library_private_types_in_public_api, prefer_typing_uninitialized_variables
+// ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api, sort_child_properties_last, duplicate_ignore
 
-// ignore: unnecessary_import
+import 'dart:io';
+// ignore: unused_import
 import 'dart:typed_data';
-// ignore: unnecessary_import
-import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_painter/flutter_painter.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 
-import 'dart:ui' as ui;
+import 'package:path_provider/path_provider.dart';
+import 'package:image_picker/image_picker.dart';
 
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+// import 'package:path_provider/path_provider.dart';
+import 'package:stick_it/stick_it.dart';
+import 'package:uuid/uuid.dart';
+// import 'package:uuid/uuid.dart';
+// import 'package:gallery_saver/gallery_saver.dart';
 
-class FlutterPainterExample extends StatefulWidget {
-  const FlutterPainterExample({Key? key}) : super(key: key);
-
+class AdvancedExample extends StatefulWidget {
+  const AdvancedExample({
+    Key? key,
+    required this.selectedImage,
+  }) : super(key: key);
+  static String routeName = 'advanced-example';
+  static String routeTitle = 'Stickers';
+  final String selectedImage;
   @override
-  _FlutterPainterExampleState createState() => _FlutterPainterExampleState();
+  _AdvancedExampleState createState() => _AdvancedExampleState();
 }
 
-class _FlutterPainterExampleState extends State<FlutterPainterExample> {
-  static const Color red = Color(0xFFFF0000);
-  FocusNode textFocusNode = FocusNode();
-  late PainterController controller;
-  var backgroundImage;
-  Paint shapePaint = Paint()
-    ..strokeWidth = 5
-    ..color = Colors.red
-    ..style = PaintingStyle.stroke
-    ..strokeCap = StrokeCap.round;
+class _AdvancedExampleState extends State<AdvancedExample> {
+  /// background image of the stick it class
+  final String _background =
+      'https://images.unsplash.com/photo-1545147986-a9d6f2ab03b5?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80';
+
+  /// used for getting images either from gallery or camera
+  final _picker = ImagePicker();
+
+  /// reference used for calling the exportImage function
+  late StickIt _stickIt;
+
+  /// the image picked by a user as file
+  File? _image;
 
   @override
-  void initState() {
-    super.initState();
-    controller = PainterController(
-        settings: PainterSettings(
-            text: TextSettings(
-              focusNode: textFocusNode,
-              textStyle: const TextStyle(
-                  fontWeight: FontWeight.bold, color: red, fontSize: 18),
-            ),
-            freeStyle: const FreeStyleSettings(
-              color: red,
-              strokeWidth: 5,
-            ),
-            shape: ShapeSettings(
-              paint: shapePaint,
-            ),
-            scale: const ScaleSettings(
-              enabled: true,
-              minScale: 1,
-              maxScale: 5,
-            )));
-    // Listen to focus events of the text field
-    textFocusNode.addListener(onFocus);
-    // Initialize background
-    initBackground();
-  }
+  Widget build(BuildContext context) {
+    double bottomPadding = MediaQuery.of(context).size.height / 4;
+    double rightPadding = MediaQuery.of(context).size.width / 12;
+    double boxSize = 56.0;
+    _stickIt = StickIt(
+      // ignore: sort_child_properties_last
 
-  /// Fetches image from an [ImageProvider] (in this example, [NetworkImage])
-  /// to use it as a background
-  void initBackground() async {
-    // Extension getter (.image) to get [ui.Image] from [ImageProvider]
-    const image = Colors.black;
+      child: _image == null
+          ? Image.file(
+              File(
+                widget.selectedImage,
+              ),
+              fit: BoxFit.cover,
+            )
+          : Image.file(_image!, fit: BoxFit.cover),
 
-    setState(() {
-      backgroundImage = image;
-      controller.background = image.backgroundDrawable;
-    });
-  }
+      stickerList: [
+        Image.network(
+          "https://i.imgur.com/btoI5OX.png",
+          height: 100,
+          width: 100,
+          fit: BoxFit.cover,
+        ),
+        Image.network(
+          "https://i.imgur.com/EXTQFt7.png",
+        ),
+        Image.network(
+          "https://i.imgur.com/btoI5OX.png",
+        ),
+        Image.network(
+          "https://i.imgur.com/btoI5OX.png",
+        ),
+        Image.network(
+          "https://i.imgur.com/btoI5OX.png",
+        ),
+        Image.network(
+          "https://i.imgur.com/btoI5OX.png",
+        ),
+        Image.network(
+          "https://i.imgur.com/btoI5OX.png",
+        ),
+        Image.network(
+          "https://i.imgur.com/btoI5OX.png",
+        ),
+        Image.network(
+          "https://i.imgur.com/btoI5OX.png",
+        ),
+        Image.network(
+          "https://i.imgur.com/btoI5OX.png",
+        ),
+      ],
+      key: UniqueKey(),
+      panelHeight: 175,
+      panelBackgroundColor: Colors.white,
+      panelStickerBackgroundColor: Theme.of(context).primaryColorLight,
+      stickerSize: 100,
+    );
 
-  /// Updates UI when the focus changes
-  void onFocus() {
-    setState(() {});
-  }
-
-  Widget buildDefault(BuildContext context) {
     return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size(double.infinity, kToolbarHeight),
-          // Listen to the controller and update the UI when it updates.
-          child: ValueListenableBuilder<PainterControllerValue>(
-              valueListenable: controller,
-              child: const Text("Flutter Painter Example"),
-              builder: (context, _, child) {
-                return AppBar(
-                  title: child,
-                  actions: [
-                    // Delete the selected drawable
-                    IconButton(
-                      icon: const Icon(
-                        PhosphorIcons.trash,
-                      ),
-                      onPressed: controller.selectedObjectDrawable == null
-                          ? null
-                          : removeSelectedDrawable,
-                    ),
-                    // Delete the selected drawable
-                    IconButton(
-                      icon: const Icon(
-                        Icons.flip,
-                      ),
-                      onPressed: controller.selectedObjectDrawable != null &&
-                              controller.selectedObjectDrawable is ImageDrawable
-                          ? flipSelectedImageDrawable
-                          : null,
-                    ),
-                    // Redo action
-                    IconButton(
-                      icon: const Icon(
-                        PhosphorIcons.arrowClockwise,
-                      ),
-                      onPressed: controller.canRedo ? redo : null,
-                    ),
-                    // Undo action
-                    IconButton(
-                      icon: const Icon(
-                        PhosphorIcons.arrowCounterClockwise,
-                      ),
-                      onPressed: controller.canUndo ? undo : null,
-                    ),
-                  ],
-                );
-              }),
+      appBar: AppBar(
+        title: const Text(
+          "Stickers",
         ),
-        // Generate image
-        floatingActionButton: FloatingActionButton(
-          // ignore: sort_child_properties_last
-          child: const Icon(
-            PhosphorIcons.imageFill,
-          ),
-          onPressed: renderAndDisplayImage,
-        ),
-        body: Stack(
-          children: [
-            if (backgroundImage != null)
-              // Enforces constraints
-              Positioned.fill(
-                child: Center(
-                  child: AspectRatio(
-                    aspectRatio: 100 / 100,
-                    child: FlutterPainter(
-                      controller: controller,
-                    ),
-                  ),
-                ),
-              ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              left: 0,
-              child: ValueListenableBuilder(
-                valueListenable: controller,
-                builder: (context, _, __) => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      child: Container(
-                        constraints: const BoxConstraints(
-                          maxWidth: 400,
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        decoration: const BoxDecoration(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                          color: Colors.white54,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (controller.freeStyleMode !=
-                                FreeStyleMode.none) ...[
-                              const Divider(),
-                              const Text("Free Style Settings"),
-                              // Control free style stroke width
-                              Row(
-                                children: [
-                                  const Expanded(
-                                      flex: 1, child: Text("Stroke Width")),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Slider.adaptive(
-                                        min: 2,
-                                        max: 25,
-                                        value: controller.freeStyleStrokeWidth,
-                                        onChanged: setFreeStyleStrokeWidth),
-                                  ),
-                                ],
-                              ),
-                              if (controller.freeStyleMode ==
-                                  FreeStyleMode.draw)
-                                Row(
-                                  children: [
-                                    const Expanded(
-                                        flex: 1, child: Text("Color")),
-                                    // Control free style color hue
-                                    Expanded(
-                                      flex: 3,
-                                      child: Slider.adaptive(
-                                          min: 0,
-                                          max: 359.99,
-                                          value: HSVColor.fromColor(
-                                                  controller.freeStyleColor)
-                                              .hue,
-                                          activeColor:
-                                              controller.freeStyleColor,
-                                          onChanged: setFreeStyleColor),
-                                    ),
-                                  ],
-                                ),
-                            ],
-                            if (textFocusNode.hasFocus) ...[
-                              const Divider(),
-                              const Text("Text settings"),
-                              // Control text font size
-                              Row(
-                                children: [
-                                  const Expanded(
-                                      flex: 1, child: Text("Font Size")),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Slider.adaptive(
-                                        min: 8,
-                                        max: 96,
-                                        value:
-                                            controller.textStyle.fontSize ?? 14,
-                                        onChanged: setTextFontSize),
-                                  ),
-                                ],
-                              ),
-
-                              // Control text color hue
-                              Row(
-                                children: [
-                                  const Expanded(flex: 1, child: Text("Color")),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Slider.adaptive(
-                                        min: 0,
-                                        max: 359.99,
-                                        value: HSVColor.fromColor(
-                                                controller.textStyle.color ??
-                                                    red)
-                                            .hue,
-                                        activeColor: controller.textStyle.color,
-                                        onChanged: setTextColor),
-                                  ),
-                                ],
-                              ),
-                            ],
-                            if (controller.shapeFactory != null) ...[
-                              const Divider(),
-                              const Text("Shape Settings"),
-
-                              // Control text color hue
-                              Row(
-                                children: [
-                                  const Expanded(
-                                      flex: 1, child: Text("Stroke Width")),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Slider.adaptive(
-                                        min: 2,
-                                        max: 25,
-                                        value: controller
-                                                .shapePaint?.strokeWidth ??
-                                            shapePaint.strokeWidth,
-                                        onChanged: (value) =>
-                                            setShapeFactoryPaint(
-                                                (controller.shapePaint ??
-                                                        shapePaint)
-                                                    .copyWith(
-                                              strokeWidth: value,
-                                            ))),
-                                  ),
-                                ],
-                              ),
-
-                              // Control shape color hue
-                              Row(
-                                children: [
-                                  const Expanded(flex: 1, child: Text("Color")),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Slider.adaptive(
-                                        min: 0,
-                                        max: 359.99,
-                                        value: HSVColor.fromColor(
-                                                (controller.shapePaint ??
-                                                        shapePaint)
-                                                    .color)
-                                            .hue,
-                                        activeColor: (controller.shapePaint ??
-                                                shapePaint)
-                                            .color,
-                                        onChanged: (hue) =>
-                                            setShapeFactoryPaint(
-                                                (controller.shapePaint ??
-                                                        shapePaint)
-                                                    .copyWith(
-                                              color: HSVColor.fromAHSV(
-                                                      1, hue, 1, 1)
-                                                  .toColor(),
-                                            ))),
-                                  ),
-                                ],
-                              ),
-
-                              Row(
-                                children: [
-                                  const Expanded(
-                                      flex: 1, child: Text("Fill shape")),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Center(
-                                      child: Switch(
-                                          value: (controller.shapePaint ??
-                                                      shapePaint)
-                                                  .style ==
-                                              PaintingStyle.fill,
-                                          onChanged: (value) =>
-                                              setShapeFactoryPaint(
-                                                  (controller.shapePaint ??
-                                                          shapePaint)
-                                                      .copyWith(
-                                                style: value
-                                                    ? PaintingStyle.fill
-                                                    : PaintingStyle.stroke,
-                                              ))),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ]
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: ValueListenableBuilder(
-          valueListenable: controller,
-          builder: (context, _, __) => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              // Free-style eraser
-              IconButton(
-                icon: Icon(
-                  PhosphorIcons.eraser,
-                  color: controller.freeStyleMode == FreeStyleMode.erase
-                      ? Theme.of(context).colorScheme.secondary
-                      : null,
-                ),
-                onPressed: toggleFreeStyleErase,
-              ),
-              // Free-style drawing
-              IconButton(
-                icon: Icon(
-                  PhosphorIcons.scribbleLoop,
-                  color: controller.freeStyleMode == FreeStyleMode.draw
-                      ? Theme.of(context).colorScheme.secondary
-                      : null,
-                ),
-                onPressed: toggleFreeStyleDraw,
-              ),
-              // Add text
-              IconButton(
-                icon: Icon(
-                  PhosphorIcons.textT,
-                  color: textFocusNode.hasFocus
-                      ? Theme.of(context).colorScheme.secondary
-                      : null,
-                ),
-                onPressed: addText,
-              ),
-              // Add sticker image
-
-              // Add shapes
-              if (controller.shapeFactory == null)
-                PopupMenuButton<ShapeFactory?>(
-                  tooltip: "Add shape",
-                  itemBuilder: (context) => <ShapeFactory, String>{
-                    LineFactory(): "Line",
-                    ArrowFactory(): "Arrow",
-                    DoubleArrowFactory(): "Double Arrow",
-                    RectangleFactory(): "Rectangle",
-                    OvalFactory(): "Oval",
-                  }
-                      .entries
-                      .map((e) => PopupMenuItem(
-                          value: e.key,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(
-                                getShapeIcon(e.key),
-                                color: Colors.black,
-                              ),
-                              Text(" ${e.value}")
-                            ],
-                          )))
-                      .toList(),
-                  onSelected: selectShape,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      getShapeIcon(controller.shapeFactory),
-                      color: controller.shapeFactory != null
-                          ? Theme.of(context).colorScheme.secondary
-                          : null,
-                    ),
-                  ),
-                )
-              else
-                IconButton(
-                  icon: Icon(
-                    getShapeIcon(controller.shapeFactory),
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  onPressed: () => selectShape(null),
-                ),
-            ],
-          ),
-        ));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return buildDefault(context);
-  }
-
-  static IconData getShapeIcon(ShapeFactory? shapeFactory) {
-    if (shapeFactory is LineFactory) return PhosphorIcons.lineSegment;
-    if (shapeFactory is ArrowFactory) return PhosphorIcons.arrowUpRight;
-    if (shapeFactory is DoubleArrowFactory) {
-      return PhosphorIcons.arrowsHorizontal;
-    }
-    if (shapeFactory is RectangleFactory) return PhosphorIcons.rectangle;
-    if (shapeFactory is OvalFactory) return PhosphorIcons.circle;
-    return PhosphorIcons.polygon;
-  }
-
-  void undo() {
-    controller.undo();
-  }
-
-  void redo() {
-    controller.redo();
-  }
-
-  void toggleFreeStyleDraw() {
-    controller.freeStyleMode = controller.freeStyleMode != FreeStyleMode.draw
-        ? FreeStyleMode.draw
-        : FreeStyleMode.none;
-  }
-
-  void toggleFreeStyleErase() {
-    controller.freeStyleMode = controller.freeStyleMode != FreeStyleMode.erase
-        ? FreeStyleMode.erase
-        : FreeStyleMode.none;
-  }
-
-  void addText() {
-    if (controller.freeStyleMode != FreeStyleMode.none) {
-      controller.freeStyleMode = FreeStyleMode.none;
-    }
-    controller.addText();
-  }
-
-  void setFreeStyleStrokeWidth(double value) {
-    controller.freeStyleStrokeWidth = value;
-  }
-
-  void setFreeStyleColor(double hue) {
-    controller.freeStyleColor = HSVColor.fromAHSV(1, hue, 1, 1).toColor();
-  }
-
-  void setTextFontSize(double size) {
-    // Set state is just to update the current UI, the [FlutterPainter] UI updates without it
-    setState(() {
-      controller.textSettings = controller.textSettings.copyWith(
-          textStyle:
-              controller.textSettings.textStyle.copyWith(fontSize: size));
-    });
-  }
-
-  void setShapeFactoryPaint(Paint paint) {
-    // Set state is just to update the current UI, the [FlutterPainter] UI updates without it
-    setState(() {
-      controller.shapePaint = paint;
-    });
-  }
-
-  void setTextColor(double hue) {
-    controller.textStyle = controller.textStyle
-        .copyWith(color: HSVColor.fromAHSV(1, hue, 1, 1).toColor());
-  }
-
-  void selectShape(ShapeFactory? factory) {
-    controller.shapeFactory = factory;
-  }
-
-  void renderAndDisplayImage() {
-    if (backgroundImage == null) return;
-    final backgroundImageSize = Size(
-        backgroundImage!.width.toDouble(), backgroundImage!.height.toDouble());
-
-    // Render the image
-    // Returns a [ui.Image] object, convert to to byte data and then to Uint8List
-    final imageFuture = controller
-        .renderImage(backgroundImageSize)
-        .then<Uint8List?>((ui.Image image) => image.pngBytes);
-
-    // From here, you can write the PNG image data a file or do whatever you want with it
-    // For example:
-    // ```dart
-    // final file = File('${(await getTemporaryDirectory()).path}/img.png');
-    // await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-    // ```
-    // I am going to display it using Image.memory
-
-    // Show a dialog with the image
-    showDialog(
-        context: context,
-        builder: (context) => RenderedImageDialog(imageFuture: imageFuture));
-  }
-
-  void removeSelectedDrawable() {
-    final selectedDrawable = controller.selectedObjectDrawable;
-    if (selectedDrawable != null) controller.removeDrawable(selectedDrawable);
-  }
-
-  void flipSelectedImageDrawable() {
-    final imageDrawable = controller.selectedObjectDrawable;
-    if (imageDrawable is! ImageDrawable) return;
-
-    controller.replaceDrawable(
-        imageDrawable, imageDrawable.copyWith(flipped: !imageDrawable.flipped));
-  }
-}
-
-class RenderedImageDialog extends StatelessWidget {
-  final Future<Uint8List?> imageFuture;
-
-  const RenderedImageDialog({Key? key, required this.imageFuture})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text("Rendered Image"),
-      content: FutureBuilder<Uint8List?>(
-        future: imageFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const SizedBox(
-              height: 50,
-              child: Center(child: CircularProgressIndicator.adaptive()),
-            );
-          }
-          if (!snapshot.hasData || snapshot.data == null) {
-            return const SizedBox();
-          }
-          return InteractiveViewer(
-              maxScale: 10, child: Image.memory(snapshot.data!));
-        },
       ),
+      body: Stack(
+        children: [
+          _stickIt,
+          Positioned(
+            bottom: bottomPadding,
+            right: rightPadding,
+            child: Column(
+              children: [
+                ////////////////////////////////////////////////////////
+                //               SAVE IMAGE TO GALLERY                //
+                ////////////////////////////////////////////////////////
+                CircularIconButton(
+                  onTap: () async {
+                    final image = await _stickIt.exportImage();
+                    final directory = await getApplicationDocumentsDirectory();
+                    final path = directory.path;
+                    final uniqueIdentifier = const Uuid().v1();
+                    final file =
+                        await File('$path/$uniqueIdentifier.png').create();
+                    file.writeAsBytesSync(image);
+                    GallerySaver.saveImage(file.path, albumName: 'Stick It')
+                        .then((value) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text(
+                            "Image saved in the gallery album 'Stick It', go take a look!"),
+                      ));
+                    });
+                  },
+                  boxColor: Theme.of(context).primaryColorDark,
+                  boxWidth: boxSize,
+                  boxHeight: boxSize,
+                  iconWidget: const Icon(
+                    Icons.check,
+                    color: Colors.white,
+                    size: 36,
+                  ),
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                ////////////////////////////////////////////////////////
+                //                  SELECT BACKGROUND                 //
+                ////////////////////////////////////////////////////////
+                CircularIconButton(
+                  onTap: () {
+                    generateModal(context);
+                  },
+                  boxWidth: boxSize,
+                  boxHeight: boxSize,
+                  iconWidget: const Icon(
+                    Icons.camera,
+                    color: Colors.white,
+                  ),
+                  boxColor: Theme.of(context).primaryColorDark,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Method that either opens the gallery to pick an image or the camera to take a photo.
+  /// Requires a [ImageSource] for the wanted selection. Updates listeners when a photo got selected.
+  Future getImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    } else {
+      print('No image selected.');
+    }
+  }
+
+  /// Generates a modal in which the user can either pick a picture from
+  /// gallery or create a pic with the camera of the mobile phone.
+  void generateModal(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 128,
+          color: Colors.white,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ////////////////////////////////////////////////////////
+                //                  IMAGE FROM GALLERY                //
+                ////////////////////////////////////////////////////////
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      getImage(ImageSource.gallery);
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.photo,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        // ignore: sized_box_for_whitespace
+                        Container(
+                          // ignore: sort_child_properties_last
+                          child: const Text('Select img from gallery'),
+                          width: 200,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(
+                  height: 2,
+                  indent: 64,
+                  endIndent: 64,
+                ),
+                ////////////////////////////////////////////////////////
+                //                 IMAGE FROM CAMERA                  //
+                ////////////////////////////////////////////////////////
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      getImage(ImageSource.camera);
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.camera_alt,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        const SizedBox(
+                          // ignore: sort_child_properties_last
+                          child: Text('Select img from camera'),
+                          width: 200,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
 
-class SelectStickerImageDialog extends StatelessWidget {
-  final List<String> imagesLinks;
+class CircularIconButton extends StatelessWidget {
+  final double _boxElevation;
+  final double _boxHeight;
+  final double _boxWidth;
+  final Color _boxColor;
+  final Icon _iconWidget;
+  final void Function()? _onTap;
 
-  const SelectStickerImageDialog({Key? key, this.imagesLinks = const []})
-      : super(key: key);
+  const CircularIconButton({
+    Key? key,
+    required iconWidget,
+    boxElevation,
+    boxHeight,
+    boxWidth,
+    boxColor,
+    onTap,
+  })  : _iconWidget = iconWidget,
+        _boxColor = boxColor ?? Colors.black,
+        _boxElevation = boxElevation ?? 8,
+        _boxHeight = boxHeight ?? 56,
+        _boxWidth = boxWidth ?? 56,
+        _onTap = onTap,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text("Select sticker"),
-      content: imagesLinks.isEmpty
-          ? const Text("No images")
-          : FractionallySizedBox(
-              heightFactor: 0.5,
-              child: SingleChildScrollView(
-                child: Wrap(
-                  children: [
-                    for (final imageLink in imagesLinks)
-                      InkWell(
-                        onTap: () => Navigator.pop(context, imageLink),
-                        child: FractionallySizedBox(
-                          widthFactor: 1 / 4,
-                          child: Image.network(imageLink),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-      actions: [
-        TextButton(
-          child: const Text("Cancel"),
-          onPressed: () => Navigator.pop(context),
-        )
-      ],
+    return ClipOval(
+      child: Material(
+        color: _boxColor,
+        elevation: _boxElevation,
+        child: InkWell(
+          child: SizedBox(
+              width: _boxWidth, height: _boxHeight, child: _iconWidget),
+          onTap: _onTap,
+        ),
+      ),
     );
   }
 }
