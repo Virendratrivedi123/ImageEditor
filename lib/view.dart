@@ -77,6 +77,9 @@ abstract class EditImageViewModel extends State<MyApp2> {
   changeTextColor(Color color) {
     setState(() {
       texts[currentIndex].color = color;
+      Navigator.of(context)
+        ..pop()
+        ..pop();
     });
   }
 
@@ -147,16 +150,36 @@ abstract class EditImageViewModel extends State<MyApp2> {
       texts.add(
         TextInfo(
           text: textEditingController.text,
-          left: 0,
-          top: 0,
+          left: 150,
+          top: 330,
           color: Colors.black,
           fontWeight: FontWeight.normal,
           fontStyle: FontStyle.normal,
-          fontSize: 20,
-          textAlign: TextAlign.left,
+          fontSize: 40,
+          textAlign: TextAlign.center,
         ),
       );
       Navigator.of(context).pop();
+    });
+  }
+
+  addNewText2(BuildContext context) {
+    setState(() {
+      texts.add(
+        TextInfo(
+          text: textEditingController.text,
+          left: 150,
+          top: 330,
+          color: Colors.black,
+          fontWeight: FontWeight.normal,
+          fontStyle: FontStyle.normal,
+          fontSize: 40,
+          textAlign: TextAlign.center,
+        ),
+      );
+      Navigator.of(context)
+        ..pop()
+        ..pop();
     });
   }
 
@@ -183,11 +206,51 @@ abstract class EditImageViewModel extends State<MyApp2> {
             onPressed: () => Navigator.of(context).pop(),
             // ignore: sort_child_properties_last
             child: const Text('Back'),
-            color: Colors.white,
-            textColor: Colors.black,
+            color: Colors.red,
+            textColor: Colors.white,
           ),
           DefaultButton(
             onPressed: () => addNewText(context),
+            // ignore: sort_child_properties_last
+            child: const Text('Add Text'),
+            color: Colors.red,
+            textColor: Colors.white,
+          ),
+        ],
+      ),
+    );
+  }
+
+  addNewDialog2(context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text(
+          'Add New Text',
+        ),
+        content: TextField(
+          controller: textEditingController,
+          maxLines: 5,
+          decoration: const InputDecoration(
+            suffixIcon: Icon(
+              Icons.edit,
+            ),
+            filled: true,
+            hintText: 'Your Text Here..',
+          ),
+        ),
+        actions: <Widget>[
+          DefaultButton(
+            onPressed: () => Navigator.of(context)
+              ..pop()
+              ..pop(),
+            // ignore: sort_child_properties_last
+            child: const Text('Back'),
+            color: Colors.red,
+            textColor: Colors.white,
+          ),
+          DefaultButton(
+            onPressed: () => addNewText2(context),
             // ignore: sort_child_properties_last
             child: const Text('Add Text'),
             color: Colors.red,

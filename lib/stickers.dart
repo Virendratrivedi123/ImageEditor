@@ -103,6 +103,12 @@ class _AdvancedExampleState extends State<AdvancedExample> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context)
+            ..pop()
+            ..pop(),
+        ),
         title: const Text(
           "Stickers",
         ),

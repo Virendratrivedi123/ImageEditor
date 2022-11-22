@@ -55,6 +55,7 @@ dependencies:
   stick_it: ^1.0.0+2
   uuid: ^3.0.7
   gallery_saver: ^2.3.2
+  aligned_dialog: ^0.0.6
   # gallery_saver: ^2.3.2
   # flutter_simple_sticker_view: ^1.0.0
 

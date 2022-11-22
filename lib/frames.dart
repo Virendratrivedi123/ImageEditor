@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, avoid_print
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -31,6 +31,7 @@ class _CarouselState extends State<Carousel> {
             content: Text('Image saved to gallery.'),
           ),
         );
+        // ignore: invalid_return_type_for_catch_error
       }).catchError((err) => print(err));
     }
   }
@@ -92,8 +93,8 @@ class _CarouselState extends State<Carousel> {
             child: Column(
               children: [
                 SizedBox(
-                  // width: MediaQuery.of(context).size.width,
-                  height: 650,
+                  width: MediaQuery.of(context).size.width,
+                  height: 500,
                   child: PageView.builder(
                       itemCount: images.length,
                       pageSnapping: true,
@@ -128,6 +129,7 @@ class _CarouselState extends State<Carousel> {
         // height: MediaQuery.of(context).size.height,
         child: Stack(
           children: <Widget>[
+            // ignore: avoid_unnecessary_containers
             Container(
                 // ignore: sort_child_properties_last
                 alignment: Alignment.center,
@@ -135,12 +137,15 @@ class _CarouselState extends State<Carousel> {
                   File(
                     widget.selectedImage,
                   ),
-                  height: 400,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  fit: BoxFit.fill,
                 )),
             Container(
               decoration: BoxDecoration(
                   image: DecorationImage(
                 image: AssetImage(images[pagePosition]),
+                fit: BoxFit.fill,
               )),
             ),
           ],
@@ -162,13 +167,13 @@ imageAnimation(PageController animation, images, pagePosition) {
       print(pagePosition);
 
       return SizedBox(
-        width: 200,
+        width: 20,
         height: 200,
         child: widget,
       );
     },
     child: Container(
-      margin: const EdgeInsets.all(10),
+      margin: const EdgeInsets.all(0),
       child: Image.network(images[pagePosition]),
     ),
   );

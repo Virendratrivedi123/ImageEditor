@@ -1,7 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_typing_uninitialized_variables, must_be_immutable
 
-// ignore: unnecessary_import
+// ignore: unnecessary_import, unused_import
 import 'dart:io';
+// ignore: unnecessary_import
 import 'dart:typed_data';
 // ignore: unnecessary_import
 import 'dart:ui';
@@ -124,6 +125,12 @@ class _FlutterPainterExampleState extends State<FlutterPainterExample2> {
               child: const Text("Flutter Painter Example"),
               builder: (context, _, child) {
                 return AppBar(
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => Navigator.of(context)
+                      ..pop()
+                      ..pop(),
+                  ),
                   title: child,
                   actions: [
                     // Delete the selected drawable
@@ -515,6 +522,7 @@ class _FlutterPainterExampleState extends State<FlutterPainterExample2> {
             content: Text('Image saved to gallery.'),
           ),
         );
+        // ignore: avoid_print, invalid_return_type_for_catch_error
       }).catchError((err) => print(err));
     }
   }
